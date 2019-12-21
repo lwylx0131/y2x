@@ -1,0 +1,33 @@
+如何使用本机与github进行互操作：
+1) 获取本机密码来连接github与本机，在win系统中使用cmd命令输入：
+ssh-keygen -t rsa -C "971088726@qq.com"
+
+2) 在本地用户目录.ssh找到id_rsa.pub，使用笔记本打开得到密钥添加到github的SSH Keys中；
+
+3) 在github添加完SSH Keys后，在win系统中打开git bash，输入：
+ssh -T git@github.com
+
+4) 依次配置邮箱地址和用户名：
+git config --global user.name "lwylx0131"
+git config --global user.email "971088726@qq.com"
+
+5) 选取目录，将github仓库克隆到本地：
+git clone https://github.com/lwylx0131/y2x.git
+git clone https://github.com/lwylx0131/c2p.git
+
+git的基本使用并上传文件到github：
+1) 将选择的目录变成git可以管理的仓库：
+git init
+
+2) 将创建文件并添加到暂存区：
+git add readme.txt
+
+3) 将文件提交到仓库：
+git commit -m "readme.txt提交"
+
+4) 将已有的本地仓库与github关联，并把本地仓库内容推送到github仓库：
+git remote add origin https://github.com/lwylx0131/y2x.git
+git push -u origin master
+
+5) git操作命令出现error参考以下链接：
+https://blog.csdn.net/LeoGanlin/article/details/80001086
