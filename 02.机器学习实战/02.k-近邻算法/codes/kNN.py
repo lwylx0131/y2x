@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import os
 
 def createDataSet():
     group = np.array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
@@ -56,13 +57,11 @@ def file2matrix(fileName):
 '''
 1) 使用matplotlib绘制散点图
 '''
-#fileName = 'datingTestSet2.txt'
-#dataSet, classLabelVector = file2matrix(fileName)
-#print(dataSet)
-#print(classLabelVector[0:5])
-#fig = plt.figure()
-#ax = fig.add_subplot(111)
-#ax.scatter(dataSet[:, 1], dataSet[: 2])
+fileName = 'datingTestSet2.txt'
+dataSet, classLabelVector = file2matrix(fileName)
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(dataSet[:, 0], dataSet[:, 1])
 #plt.show()
 
 '''
@@ -107,3 +106,29 @@ def datingClassTest():
     print('knn分类算法的错误率为: %0.4f' % (errorRatio))
     
 datingClassTest()
+
+'''
+1) 将图像转换为向量，把一个32*32的二进制图像矩阵转换为1*1024的向量；
+'''
+def img2vector(fileName):
+    returnVector = np.zeros((1, 1024))
+    fr = open(fileName)
+    for i in range(32):
+        lineStr = fr.readline()
+        for j in range(32):
+            returnVector[0, 32*i+j] = int(lineStr[j])
+    return returnVector
+
+testVector = img2vector('digits/testDigits/0_13.txt')
+#print(testVector[0, 0:31])
+
+'''
+1) 手写数字识别系统测试；
+'''
+def handwritingClassTest():
+    trainingFileList = os.listdir('digits/trainingDigits')
+    m = len(trainingFileList)
+    for i in trainingFileList:
+        print(i)
+
+handwritingClassTest()
