@@ -16,7 +16,8 @@ i: 表示1~n，表示分类的数目
 import math
 
 '''
-1)计算给定数据的香农熵;
+1)详细介绍决策树：https://blog.csdn.net/jiaoyangwm/article/details/79525237#311__83
+2)计算给定数据的香农熵（经验熵）;
 '''
 def calcShannonEnt(dataSet):
     numEntries = len(dataSet)
@@ -70,13 +71,54 @@ def splitDataSet(dataSet, axis, value):
         # 如果某个特征和我们指定的特征相同，那么除去这个特征创建一个新的子特征
         if featVec[axis] == value:
             reducedFeatVec = featVec[:axis]
+            # a=[1,2,3] b=[4,5,6] => [1,2,3,4,5,6]
             reducedFeatVec.extend(featVec[axis+1:])
+            # a=[1,2,3] b=[4,5,6] => [1,2,3,[4,5,6]]
             retDataSet.append(reducedFeatVec)
     return retDataSet
 
 print(dataSet) # [[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
 # 划分出第二个特征并指定值为1的数据集
-print(splitDataSet(dataSet, 1, 1)) # [[1, 'yes'], [1, 'yes'], [0, 'no'], [0, 'no']]
+#print(splitDataSet(dataSet, 1, 1)) # [[1, 'yes'], [1, 'yes'], [0, 'no'], [0, 'no']]
 
+'''
+1)循环计算香农熵和splitDataSet()函数，找到最好的特征划分方式
+'''
+def chooseBestFeatureToSplit(dataSet):
+    numFeature = len(dataSet[0]) - 1
+    # 计算整个数据集的原始香农熵
+    baseEntropy = calcShannonEnt(dataSet)
+    #存储最好的信息增益
+    bestInfoGain = 0.0
+    bestFeatureIndex = -1
+    for i in range(numFeature):
+        # 将dataSet所有数据集的第i个特征值一一遍历放到list，再使用set去重
+        featValList = [example[i] for example in dataSet]
+        uniqueVals = set(featValList)
+        # 经验条件熵
+        newEntropy = 0.0
+        # 将dataSet数据集的第i个特征对应的所有特征值一一划分数据集并计算对应的香农熵
+        for value in uniqueVals:
+            subDataSet = splitDataSet(dataSet, i, value)
+            #print('len(subDataSet) = %d, len(dataSet) = %d' %(len(subDataSet), len(dataSet)))
+            prob = float(len(subDataSet)) / float(len(dataSet))
+            #根据公式计算出经验条件熵
+            newEntropy += prob * calcShannonEnt(subDataSet)
+        infoGain = baseEntropy - newEntropy
+        print('第[%d]个特征的信息增益为: %.3f' %(i, infoGain))
+        if(infoGain > bestInfoGain):
+            #在dataSet数据集中，计算所有特征的经验条件熵得到信息增益后进行比较，找到最大的信息增益
+            bestInfoGain = infoGain
+            #记录信息增益最大的特征索引值
+            bestFeatureIndex = i
+            print('相比之后第[%d]个特征的最大特征值的信息增益为: %.3f' %(i, bestInfoGain))
+    return bestFeatureIndex
 
-        
+print('相比之后最好的信息增益对应的特征索引值为: %d' %(chooseBestFeatureToSplit(dataSet)))
+'''
+[[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
+第[0]个特征的信息增益为: 0.420
+相比之后第[0]个特征的最大特征值的信息增益为: 0.420
+第[1]个特征的信息增益为: 0.171
+相比之后最好的信息增益对应的特征索引值为: 0
+'''
