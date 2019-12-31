@@ -1,0 +1,15 @@
+1) 清华镜像源anaconda地址：
+https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
+
+2) pytorch镜像地址：
+https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+
+3) 设置搜索时显示通道地址：
+conda config --set show_channel_urls yes
+
+4) 安装pytorch命令：
+conda install pytorch torchvision
+
+5) 验证：
+import torch
+torch.cuda.is_available()
