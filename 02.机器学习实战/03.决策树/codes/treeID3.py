@@ -203,8 +203,8 @@ def plotMidText(cntrPt, parentPt, txtString):
     yMid = (parentPt[1]-cntrPt[1])/2.0 + cntrPt[1]
     createPlot.ax1.text(xMid, yMid, txtString, va="center", ha="center", rotation=30)
 
-decisionNode = dict(boxstyle="sawtooth", fc="b")
-leafNode = dict(boxstyle="round4", fc="r")
+decisionNode = dict(boxstyle="sawtooth", fc="r")
+leafNode = dict(boxstyle="round4", fc="b")
 arrow_args = dict(arrowstyle="<-")
 def plotTree(myTree, parentPt, nodeTxt):#if the first key tells you what feat was split on
     numLeafs = getNumLeafs(myTree)  #this determines the x width of this tree
