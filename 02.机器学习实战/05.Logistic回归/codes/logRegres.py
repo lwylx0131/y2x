@@ -105,6 +105,7 @@ print('Logistic回归随机梯度上升最优算法模型值:\n{}'.format(weight
 我们期望算法能够避免来回波动，从而收敛到某个值。另外，收敛速度也需要加快，可通过以下算法改进。
 '''
 def stocGradAscent1(dataMatrix, classLabels, numIter=150):
+    dataMatrix = np.array(dataMatrix)
     m, n = np.shape(dataMatrix)
     weights = np.ones(n)
     for j in range(numIter):
@@ -114,7 +115,7 @@ def stocGradAscent1(dataMatrix, classLabels, numIter=150):
             alpha = 4 / (1.0 + j + i) + 0.01
             # 随机从数据集中获取数据记录
             randIndex = int(random.uniform(0, len(dataIndex)))
-            h = sigmoid(dataMatrix[randIndex] * weights)
+            h = sigmoid(sum(dataMatrix[randIndex] * weights))
             error = classLabels[randIndex] - h
             weights = weights + alpha * error * dataMatrix[randIndex]
             del[dataIndex[randIndex]]
@@ -123,4 +124,47 @@ def stocGradAscent1(dataMatrix, classLabels, numIter=150):
 dataMatrix, labelMatrix = loadDataSet()
 weights = stocGradAscent1(dataMatrix, labelMatrix, 500)
 print('Logistic回归alpha变动随机梯度上升最优算法模型值:\n{}'.format(weights))
-plotBestFit(weights)
+#plotBestFit(weights)
+
+def classifyVector(inX, weights):
+    prob = sigmoid(np.sum(inX * weights))
+    if prob > 0.5:
+        return 1.0
+    else:
+        return 0.0
+    
+def colicTest():
+    horseColicTrain = open('horseColicTraining.txt')
+    horseColicTest = open('horseColicTest.txt')
+    trainingSet = []
+    trainingLabels = []
+    for line in horseColicTrain.readlines():
+        currentLine = line.strip().split('\t')
+        lineArr = []
+        for i in range(21):
+            lineArr.append(float(currentLine[i]))
+        trainingSet.append(lineArr)
+        trainingLabels.append(float(currentLine[21]))
+    trainWeights = stocGradAscent1(trainingSet, trainingLabels, 500)
+    errorCount = 0
+    numTestVec = 0.0
+    for line in horseColicTest.readlines():
+        numTestVec += 1.0
+        currentLine = line.strip().split('\t')
+        lineArr = []
+        for i in range(21):
+            lineArr.append(float(currentLine[i]))
+        if int(classifyVector(lineArr, trainWeights)) != int(currentLine[21]):
+            errorCount += 1
+    errorRate = float(errorCount) / numTestVec
+    print('Logistic回归预测分类错误率: %f' %(errorRate))
+    return errorRate
+
+def multiTest():
+    numTests = 10
+    errorSum = 0.0
+    for k in range(numTests):
+        errorSum += colicTest()
+    print('迭代测试[%d]次，其平均错误率为: %f' %(numTests, errorSum / float(numTests)))
+        
+multiTest()
