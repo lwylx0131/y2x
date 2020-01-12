@@ -22,7 +22,6 @@ print(a + b)
 
 
 import numpy as np
-from IPython import display
 from matplotlib import pyplot as plt
 import random
 
@@ -35,16 +34,9 @@ labels = true_w[0] * features[:, 0] + true_w[1] * features[:, 1] + true_b
 labels += torch.from_numpy(np.random.normal(0, 0.01, size=labels.size()))
 print(features[0], labels[0])
 
-
-'''
-生成第二个特征features[:,1]和标签labels的散点图，观察两者间的线性关系
-'''
-def use_svg_display():
-    display.set_matplotlib_formats('svg')
-
-def set_figsize(figsize=(4.5, 3.5)):
-    use_svg_display()
-    plt.rcParams['figure.figsize'] = figsize
+import sys
+sys.path.append('../..')
+from dl_common_pytorch import *
 
 set_figsize()
 plt.scatter(features[:, 1].numpy(), labels.numpy(), 1)
