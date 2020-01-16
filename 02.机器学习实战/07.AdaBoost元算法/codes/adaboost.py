@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 def loadSimpData():
     dataMat = np.matrix([[1., 2.1], [2., 1.1], [1.3, 1.], [1., 1.], [2., 1.]])
@@ -92,7 +93,7 @@ def adaBoostTrainDS(dataArr, classLabels, numIt=40):
         print('total error: ', errorRate)
         if errorRate == 0.0:
             break
-    return weakClassArr
+    return weakClassArr, aggClassEst
 
 dataArr, classLabels = loadSimpData()
 classifierArray = adaBoostTrainDS(dataArr, classLabels, 9)
@@ -118,8 +119,8 @@ def adaClassify(datToClass, classifierArr):
     # 返回aggClassEst的符号， 即如果aggClassEst大于0则返回+1,而如果小于0则返回-1
     return np.sign(aggClassEst)
 
-dataArr, labelArr = loadSimpData()
-classifierArray = adaBoostTrainDS(dataArr, labelArr, 30)
+##dataArr, labelArr = loadSimpData()
+##classifierArray = adaBoostTrainDS(dataArr, labelArr, 30)
 ##print(classifierArray)
 ##print('ada classify1: ', adaClassify([0, 0], classifierArray))
 ##print('ada classify2: ', adaClassify([[5, 5], [0, 0]], classifierArray))
@@ -139,7 +140,7 @@ def loadDataSet(fileName):
     return dataMatrix, labelMatrix
 
 dataArr, labelArr = loadDataSet('horseColicTraining.txt')
-classifierArray = adaBoostTrainDS(dataArr, labelArr, 10)
+classifierArray, aggClassEst = adaBoostTrainDS(dataArr, labelArr, 10)
 
 testArr, testLabelArr = loadDataSet('horseColicTest.txt')
 prediction10 = adaClassify(testArr, classifierArray)
@@ -148,3 +149,44 @@ numErr = errArr[prediction10 != np.mat(testLabelArr).T].sum()
 numRate = float(numErr) / len(prediction10)
 print('预测错误数量: %d, 预测错误率: %.2f' %(numErr, numRate))
 
+'''
+ROC曲线的绘制以及AUC计算函数
+'''
+def plotROC(predStrengths, classLabels):
+    # 当前坐标点位置
+    currPoint = (1.0, 1.0)
+    ySum = 0.0
+    # 正例数量
+    numPositiveClass = sum(np.array(classLabels) == 1.0)
+    # x/y坐标轴上的步进数目
+    yStep = 1 / float(numPositiveClass)
+    xStep = 1 / float(len(classLabels) - numPositiveClass)
+    # 将预测值的索引按照从小到大的顺序排序
+    sortedIndicies = predStrengths.argsort()
+    fig = plt.figure()
+    fig.clf()
+    ax = plt.subplot(111)
+    for index in sortedIndicies.tolist()[0]:
+        # 当遍历表时，每得到一个标签为1.0的类，则要沿着y轴的方向下降一个步长，即不断降低真阳率
+        if classLabels[index] == 1.0:
+            delX = 0
+            delY = yStep
+        # 类似地，对于每个其他类别的标签，则是在x方向上倒退了一个步长（假阴率方向）
+        else:
+            delX = xStep
+            delY = 0
+            # 所有高度的和（ySum）随着x轴的每次移动而渐次增加
+            ySum += currPoint[1]
+        ax.plot([currPoint[0], currPoint[0] - delX], [currPoint[1], currPoint[1] - delY], c='b')
+        currPoint = (currPoint[0] - delX, currPoint[1] - delY)
+    ax.plot([0, 1], [0, 1], 'b--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC curve for AdaBoost Horse Colic Detection System')
+    ax.axis([0, 1, 0, 1])
+    plt.show()
+    print('Area Under Curve(AUC): %.3f' %(ySum * xStep))
+    
+dataArr, labelArr = loadDataSet('horseColicTraining.txt')
+classifierArray, aggClassEst = adaBoostTrainDS(dataArr, labelArr, 10)
+plotROC(aggClassEst.T, labelArr)
