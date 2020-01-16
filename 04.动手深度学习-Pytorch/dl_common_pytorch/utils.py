@@ -27,6 +27,7 @@ def data_iter(batch_size, features, labels):
 
 # 线性回归矢量计算表达式，使用mm函数做矩阵乘法
 def linreq(X, w, b):
+    w = w.to(torch.float64) # tensor double -> float64
     return torch.mm(X, w) + b
 
 # 平方损失定义线性回归的损失函数

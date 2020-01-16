@@ -43,9 +43,9 @@ set_figsize()
 #plt.show()
 
 batch_size = 10
-for X, y in data_iter(batch_size, features, labels):
-    print(X, y)
-    break
+##for X, y in data_iter(batch_size, features, labels):
+##    print(X, y)
+##    break
 
 # 将权重初始化均值为0，标准差为0.01的正态随机数，偏差则初始化为0
 w = torch.tensor(np.random.normal(0, 0.01, (num_inputs, 1)), dtype=torch.float32)
@@ -53,3 +53,25 @@ b = torch.zeros(1, dtype=torch.float32)
 # 由于之后的模型训练中，需要对这些参数求梯度来迭代参数的值，因此设置梯度requires_grad=True属性
 w.requires_grad_(requires_grad=True)
 b.requires_grad_(requires_grad=True)
+
+'''训练模型'''
+lr = 0.03
+num_epochs = 3
+net = linreq
+loss = squared_loss
+for epoch in range(num_epochs):
+    # 在每一个迭代周期中，会使用训练数据集中所有样本一次
+    # x和y分别是小批量样本的特征和标签
+    for X, y in data_iter(batch_size, features, labels):
+        # l是有关小批量X和y的损失
+        l = loss(net(X, w, b), y).sum()
+        # 小批量的损失对模型参数求梯度
+        l.backward()
+        # 使用小批量随机梯度下降迭代模型参数
+        sgd([w, b], lr, batch_size)
+        w.grad.data.zero_()
+        b.grad.data.zero_()
+    train_l = loss(net(features, w, b), labels)
+    print('epoch %d, loss %f' %(epoch + 1, train_l.mean().item()))
+print(true_w, '\n', w)
+print(true_b, '\n', b)
