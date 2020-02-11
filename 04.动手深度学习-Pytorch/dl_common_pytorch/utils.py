@@ -24,7 +24,23 @@ def data_iter(batch_size, features, labels):
     for i in range(0, num_examples, batch_size):
         j = torch.LongTensor(indices[i: min(i + batch_size, num_examples)])
         yield features.index_select(0, j), labels.index_select(0, j)
-
+'''
+features = torch.from_numpy(np.random.normal(0, 0.1, (5, 2)))
+tensor([[ 0.0049, -0.0851],
+        [ 0.1637, -0.0807],
+        [-0.0296, -0.0461],
+        [ 0.1592,  0.0013],
+        [ 0.1071,  0.1362]], dtype=torch.float64)
+labels = 2*features[:, 0] + (-3.4)*features[:, 1] + 4.2
+labels += torch.from_numpy(np.random.normal(0, 0.01, size=labels.size()))
+indices[0: 2]
+[4, 3, 0, 1, 2] -> [4, 3]
+j = torch.LongTensor(indices[0:2])
+features.index_select(0, j)
+tensor([[0.1071, 0.1362],
+        [0.1592, 0.0013]], dtype=torch.float64)
+'''
+		
 # 线性回归矢量计算表达式，使用mm函数做矩阵乘法
 def linreq(X, w, b):
     w = w.to(torch.float64) # tensor double -> float64
