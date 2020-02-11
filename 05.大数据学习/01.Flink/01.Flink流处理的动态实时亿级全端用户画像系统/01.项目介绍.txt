@@ -1,0 +1,74 @@
+数据接入来源：
+PC端、移动端、微信小程序，快应用
+1）将存储到关系型数据库的业务数据以及用户日志同步到hdfs数据仓库；
+2）然后从hdfs或者用户日志同步到flink计算引擎中；
+
+技术：
+Flink+SpringBoot+SpringCloud+Vue.js+LR+Kmeans+TF-IDF+++Hadoop+Hbase+Kafka+Flume+Mongo
+
+项目价值：
+该系统已经在线上运行2年之久，现在稳定的运行中，已经帮助企业实现了很大的盈利，
+这套系统是针对亿级数据的用户画像，帮助运营商很好的了解用户，根据这套系统，可以针对性的营销，包括广告，增加用户的粘度，增加系统的趣味性等等。
+
+静态信息：用户的注册信息，商品信息，商家信息等等；
+对于静态信息，有些是不太准确的，需要通过算法模型进一步纠正，比如性别，有些用户会填写错误。
+动态信息：注册、浏览、点击、购买、签收、评价、收藏等等；
+用户比较重要的行为数据：浏览商品、收藏商品、加入购物车、关注商品、用户注册时间，首单时间，潮妈族、纠结商品，最大消费，订单数量，退货数量等等；
+
+用户表(userInfo)：用户ID、用户名、密码、性别、手机号、邮箱、年龄、户籍省份、身份证编号、注册时间、收货地址、终端类型
+userid int(20)
+username varchar(50)
+password varchar(50)
+sex int(1)
+telphone varchar(50)
+email varchar(50)
+age int(20)
+idCard varchar(50)
+registerTime timestamp
+usertype int(1) 0pc端 1移动端 2小程序
+
+用户详细补充表(userdetail)：学历、收入、职业、婚姻、是否有小孩、是否有车有房、使用手机品牌、用户id
+userdetailid int(20)
+userid int(20)
+edu int(1)
+profession varchar(20)
+marriage int(1) 1未婚 2已婚 3离异 4未知
+haschild int(1) 1没有小孩 2有小孩 3未知
+hascar int(1) 1有车 2无车 3未知
+hashourse int(1) 1有房 2无房 3未知
+telphonebrand varchar(50)
+
+数据同步：将mysql、oracle上面的数据使用sqoop工具同步到hdfs，半小时同步一次数据。
+
+商品信息表(productinfo)：
+id int(20)
+productyypeid int(20) 商品类别id
+productname varchar(50) 商品名称id
+productdescription varchar(1500) 商品描述
+price int(20) 价格
+num int(20) 数量
+createtime timestamp 创建时间
+updatetime timestamp 更新时间
+mechartid int(20) 商家id
+producturl varchar(20) 商品图片地址
+
+商品类别表（producttype）：
+id int(20)
+producttypename varchar(50) 商品类别名称
+producttypedescription varchar(200) 商品类别描述
+producttypeleave int(2) 商品类别等级
+
+用户订单表（orderinfo）：
+id int(20) 订单id
+productid int(20) 商品id
+producttypeid int(20) 商品类别id
+createtime timestamp 订单时间
+paytime timestamp 支付时间
+paytype int(20) 支付方式
+paystatus int(20) 支付状态
+amount double(20) 金额
+couponamount double(20) 使用优惠券金额
+totalamount double(20) 总金额
+refundamount double(20) 退款金额
+num int(20) 商品数量
+userid int(20) 用户id

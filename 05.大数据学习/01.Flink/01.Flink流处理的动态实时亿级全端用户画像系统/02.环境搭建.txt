@@ -1,0 +1,105 @@
+hadoop2.6.0伪分布式环境搭建：
+1）主机名设置：
+vim /etc/hosts
+ip master
+
+2）免密设置：
+ssh-keygen -t rsa
+ssh-copy-id master
+ssh master
+
+3）hadoop配置：
+vim etc/hadoop/hadoop-env.sh
+export JAVA_HOME
+vim etc/hadoop/core-site.xml
+<property>
+	<name>fs.default.name</name>
+	<value>hdfs://master:9000</value>
+</property>
+<property>
+	<name>hadoop.tmp.dir</name>
+	<value>/user/local/hadoop/tmp</value>
+</property>
+vim etc/hadoop/hdfs-site.xml
+<property>
+	<name>dfs.replication</name>
+	<value>1</value>
+</property>
+<property>
+	<name>dfs.permissions</name>
+	<value>true</value>
+</property>
+vim etc/hadoop/mapred-site.xml
+<property>
+	<name>mapreduce.framework.name</name>
+	<value>yarn</value>
+</property>
+<property>
+	<name>mapreduce.jobhistory.address</name>
+	<value>master:10020</value>
+</property>
+vim etc/hadoop/yarn-site.xml
+<property>
+	<name>yarn.resourcemanager.hostname</name>
+	<value>master</value>
+</property>
+<property>
+	<name>yarn.nodemanager.aux-services</name>
+	<value>mapreduce_shuffle</value>
+</property>
+<property>
+	<name>mapreduce.job.ubertask.enable</name>
+	<value>true</value>
+</property>
+
+4）vim ~/.bash_profile
+export JAVA_HOME
+export HADOOP_HOME
+
+5）启动hadoop：
+hadoop namenode -format
+start-dfs.sh
+start-yarn.sh
+systemctl stop firewalld.service
+http://192.168.159.128:50070
+
+hbase伪分布式环境搭建：
+1）hbase配置：
+vim conf/hbase-env.sh
+export JAVA_HOME
+vim conf/hbase-site.xml
+<property>
+	<name>hbase.rootdir</name>
+	<value>hdfs://master:9000/hbase</value>
+</property>
+<property>
+	<name>hbase.cluster.distributed</name>
+	<value>true</value>
+</property>
+<property>
+	<name>hbase.zookeeper.quorum</name>
+	<value>master</value>
+</property>
+<property>
+	<name>dfs.replication</name>
+	<value>1</value>
+</property>
+vim conf/regionservers
+master
+
+2）vim ~/.bash_profile
+export ZOOKEEPER_HOME
+export HBASE_HOME
+
+3）hbase启动：
+zkServer.sh start
+start-hbase.sh
+http://192.168.159.128:60010
+
+mongo环境搭建：
+1）mkdir ./mongodb/data
+vim ~/.bash_profile
+export MONGO_HOME
+
+2）启动mongo：
+mongod --dbpath=data
