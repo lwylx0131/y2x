@@ -59,8 +59,8 @@ net = nn.Sequential()
 net.add_module('linear', nn.Linear(num_inputs, 1))
 #net.add_module()
 
-#import collections.OrderedDict
-#net = nn.Sequential(OrderedDict([('linear', nn.Linear(num_inputs, 1))]))
+from collections import OrderedDict
+net = nn.Sequential(OrderedDict([('linear', nn.Linear(num_inputs, 1))]))
 
 print(net)
 #print(net[0]) 

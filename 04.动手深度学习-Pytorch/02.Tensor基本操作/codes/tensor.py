@@ -85,3 +85,11 @@ c = torch.tensor(a)
 a += 1
 print(a, c)
 
+'''
+torch.mm 和 torch.mul 的区别？
+torch.manual_seed(1)的作用？
+optimizer.zero_grad()的作用？
+(1)torch.mm是矩阵相乘，torch.mul是按元素相乘；
+(2)设置随机种子，使实验结果可以复现；
+(3)使梯度置零，防止不同batch得到的梯度累加；
+'''
