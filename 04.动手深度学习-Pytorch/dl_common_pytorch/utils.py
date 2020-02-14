@@ -88,7 +88,14 @@ def evaluate_accuracy(data_iter, net):
         acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
         n += y.shape[0]
     return acc_sum / n
-	
+
+import torch.nn as nn
+class FlattenLayer(nn.Module):
+    def __init__(self):
+        super(FlattenLayer, self).__init__()
+    def forward(self, x):
+        return x.view(x.shape[0], -1)
+		
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, params=None, lr=None, optimizer=None):
     for epoch in range(num_epochs):
         print("第%d次正在训练." %(epoch+1))
