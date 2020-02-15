@@ -59,7 +59,7 @@ def fit_and_plot(train_features, test_features, train_labels, test_labels):
         test_labels = test_labels.view(-1, 1)
         train_ls.append(loss(net(train_features), train_labels).item())
         test_ls.append(loss(net(test_features), test_labels).item())
-        print('第%d次迭代：训练集损失值 = %f, 测试集损失值 = %f.' %(epoch+1, train_ls[-1], test_ls[-1]))
+    print('最后第%d次迭代：训练集损失值 = %f, 测试集损失值 = %f.' %(epoch+1, train_ls[-1], test_ls[-1]))
     print('weight: ', net.weight.data)
     print('bias: ', net.bias.data)
 
@@ -68,4 +68,35 @@ fit_and_plot(poly_features[:n_train, :], poly_features[n_train:, :], labels[:n_t
 '''
 weight:  tensor([[ 1.2004, -3.3983,  5.6003]])
 bias:  tensor([4.9981])
+'''
+
+# 我们再试试线性函数拟合，很明显，该模型的训练误差在迭代早期下降后很难继续降低。
+# 在完成最后迭代周期后，训练误差依旧很高。线性模型在非线性模型（如三阶多项式函数）生成的数据集上容易欠拟合。
+fit_and_plot(features[:n_train, :], features[n_train:, :], labels[:n_train], labels[n_train:])
+'''
+weight:  tensor([[27.2593]])
+bias:  tensor([2.3145])
+'''
+
+# 实际上，即使使用与数据生成模型同阶的三阶多项式函数模型，如果训练样本不足，该模型依然容易过拟合。
+# 让我们只使用两个样本来训练模型。很显然，训练样本过少了，甚至少于模型参数的数量。
+# 这使模型显得过于复杂，以至于容易被训练数据中的噪声影响。在迭代过程中，尽管训练误差较低，但是测试数据集上的误差却很高，这是典型的过拟合现象。
+fit_and_plot(poly_features[0:2, :], poly_features[n_train:, :], labels[0:2], labels[n_train:])
+'''
+最后第100次迭代：训练集损失值 = 0.000105, 测试集损失值 = 0.000126.
+weight:  tensor([[ 1.2010, -3.3991,  5.6000]])
+bias:  tensor([4.9984])
+最后第100次迭代：训练集损失值 = 201.139023, 测试集损失值 = 320.955444.
+weight:  tensor([[18.3441]])
+bias:  tensor([1.6572])
+最后第100次迭代：训练集损失值 = 0.184889, 测试集损失值 = 484.366028.
+weight:  tensor([[1.3346, 1.8780, 1.4825]])
+bias:  tensor([3.5345])
+'''
+
+'''
+1）由于无法从训练误差估计泛化误差，一味地降低训练误差并不意味着泛化误差一定会降低。机器学习模型应关注降低泛化误差。
+2）可以使用验证数据集来进行模型选择。
+3）欠拟合模型无法得到较低的训练误差，过拟合指模型的训练误差远小于它在测试数据集上的误差。
+4）应选择复杂度适合的模型并避免使用过少的训练样本。
 '''

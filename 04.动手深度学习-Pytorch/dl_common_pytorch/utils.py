@@ -43,7 +43,7 @@ tensor([[0.1071, 0.1362],
 		
 # 线性回归矢量计算表达式，使用mm函数做矩阵乘法
 def linreq(X, w, b):
-    w = w.to(torch.float64) # tensor double -> float64
+    #w = w.to(torch.float64) # tensor double -> float64
     return torch.mm(X, w) + b
 
 # 平方损失定义线性回归的损失函数
@@ -82,13 +82,31 @@ def load_data_fashion_mnist(batch_size, resize=None, root='FashionMNIST2065'):
 
     return train_iter, test_iter
 
+'''
 def evaluate_accuracy(data_iter, net):
     acc_sum, n = 0.0, 0
     for X, y in data_iter:
         acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
         n += y.shape[0]
     return acc_sum / n
+'''
 
+def evaluate_accuracy(data_iter, net):
+    acc_sum, n = 0.0, 0
+    for X, y in data_iter:
+        if isinstance(net, torch.nn.Module):
+            net.eval() # 评估模型，这会关闭dropout
+            acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
+            net.train() # 改回训练模式
+        else:
+            # 自定义模型，如果有is_training这个参数，将is_training设置成False
+            if('is_training' in net.__code__.co_varnames):
+                acc_sum += (net(X, is_training=False).argmax(dim=1) == y).float().sum().item()
+            else:
+                acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()			
+        n += y.shape[0]
+    return acc_sum / n
+	
 import torch.nn as nn
 class FlattenLayer(nn.Module):
     def __init__(self):
