@@ -73,15 +73,15 @@ train_iter, test_iter = dl.load_data_fashion_mnist(batch_size)
 dl.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, params, lr)
 '''
 第1次正在训练.
-epoch 1, loss 0.0047, train acc 0.534, test acc 0.731
+epoch 1, loss 0.0047, train acc 0.534, test acc 0.724
 第2次正在训练.
-epoch 2, loss 0.0023, train acc 0.781, test acc 0.806
+epoch 2, loss 0.0023, train acc 0.784, test acc 0.769
 第3次正在训练.
-epoch 3, loss 0.0019, train acc 0.821, test acc 0.828
+epoch 3, loss 0.0019, train acc 0.825, test acc 0.829
 第4次正在训练.
-epoch 4, loss 0.0017, train acc 0.840, test acc 0.806
+epoch 4, loss 0.0017, train acc 0.840, test acc 0.825
 第5次正在训练.
-epoch 5, loss 0.0016, train acc 0.852, test acc 0.803
+epoch 5, loss 0.0016, train acc 0.849, test acc 0.833
 '''
 
 # PyTorch的简洁实现，只需要在全连接层后添加Dropout层并指定丢弃概率
@@ -103,3 +103,15 @@ for param in net.parameters():
 # 训练并测试模型
 optimizer = torch.optim.SGD(net.parameters(), lr=0.5)
 dl.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, None, None, optimizer)
+'''
+第1次正在训练.
+epoch 1, loss 0.0044, train acc 0.557, test acc 0.763
+第2次正在训练.
+epoch 2, loss 0.0022, train acc 0.787, test acc 0.819
+第3次正在训练.
+epoch 3, loss 0.0019, train acc 0.820, test acc 0.743
+第4次正在训练.
+epoch 4, loss 0.0018, train acc 0.837, test acc 0.834
+第5次正在训练.
+epoch 5, loss 0.0016, train acc 0.848, test acc 0.828
+'''
