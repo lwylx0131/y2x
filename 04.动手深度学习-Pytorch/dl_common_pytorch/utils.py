@@ -139,3 +139,12 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, params=N
             n += y.shape[0]
         test_acc = evaluate_accuracy(test_iter, net)
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f' %(epoch+1, train_l_sum/n, train_acc_sum/n, test_acc))
+
+# 二维卷积数组的计算，输入数组为X，核数组为K，输出数组为Y
+def corr2d(X, K):
+    h, w = K.shape
+    Y = torch.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1))
+    for i in range(Y.shape[0]):
+        for j in range(Y.shape[1]):
+            Y[i, j] = (X[i:i+h, j:j+w] * K).sum()
+    return Y
